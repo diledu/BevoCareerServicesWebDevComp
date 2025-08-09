@@ -1,0 +1,108 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<RoleEditModel>
+
+@{
+    ViewBag.Title = "Roles";
+}
+
+<h2>Mange Users</h2>
+
+<div>
+    <a asp-action="Register" asp-controller="Account" asp-route-roleType="Student" id="registerLink" class="nav-link">Create Student</a>
+    <a asp-action="Register" asp-controller="Account" asp-route-roleType="Recruiter" id="registerLink" class="nav-link">Create Recruiter</a>
+    <a asp-action="Register" asp-controller="Account" asp-route-roleType="CSO" id="registerLink" class="nav-link">Create CSO</a>
+</div>
+
+<!--Display for Students-->
+<h2>Students</h2>
+@if (ViewBag.Students != null)
+{
+    var students = (IEnumerable<AppUser>)ViewBag.Students;
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => students.First().FirstName)</th>
+                <th>@Html.DisplayNameFor(model => students.First().MiddleInitial)</th>
+                <th>@Html.DisplayNameFor(model => students.First().LastName)</th>
+                <th>@Html.DisplayNameFor(model => students.First().GPA)</th>
+                <th>@Html.DisplayNameFor(model => students.First().GraduationYear)</th>
+                <th>@Html.DisplayNameFor(model => students.First().Major)</th>
+                <th>@Html.DisplayNameFor(model => students.First().PositionType)</th>
+                <th>User Details:</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in students)
+            {
+                <tr>
+                    <td>@item.FirstName</td>
+                    <td>@item.MiddleInitial</td>
+                    <td>@item.LastName</td>
+                    <td>@item.GPA</td>
+                    <td>@item.GraduationYear</td>
+                    <td>@item.Major?.MajorName</td>
+                    <td>@item.PositionType</td>
+                    <td><a asp-action="UserDetails" asp-controller="Account" asp-route-id="@item.Id">Details</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!--Display Recruiters-->
+<h2>Recruiters</h2>
+@if (ViewBag.Recruiters != null)
+{
+    var recruiters = (IEnumerable<AppUser>)ViewBag.Recruiters;
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Middle Initial</th>
+                <th>Last Name</th>
+                <th>Company</th>
+                <th>User Details:</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in recruiters)
+            {
+                <tr>
+                    <td>@item.FirstName</td>
+                    <td>@item.MiddleInitial</td>
+                    <td>@item.LastName</td>
+                    <td>@item.Company?.Name</td>
+                    <td><a asp-action="UserDetails" asp-controller="Account" asp-route-id="@item.Id">Details</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!--Display CSO-->
+<h2>CSOs</h2>
+@if (ViewBag.CSO != null)
+{
+    var csos = (IEnumerable<AppUser>)ViewBag.CSO;
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Middle Initial</th>
+                <th>Last Name</th>
+                <th>User Details:</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in csos)
+            {
+                <tr>
+                    <td>@item.FirstName</td>
+                    <td>@item.MiddleInitial</td>
+                    <td>@item.LastName</td>
+                    <td><a asp-action="UserDetails" asp-controller="Account" asp-route-id="@item.Id">Details</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

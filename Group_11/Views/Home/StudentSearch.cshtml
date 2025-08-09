@@ -1,0 +1,98 @@
+﻿@model IEnumerable<Group_11.Models.AppUser>
+
+@{
+    ViewData["Title"] = "Student Search";
+}
+
+<h1>Student Search</h1>
+
+<form asp-action="StudentSearch" asp-controller="Home" method="post">
+    <!-- Name search field -->
+    <div class="form-group">
+        <label for="SearchString" class="me-2">Name:</label>
+        <input name="SearchString" class="form-control" />
+    </div>
+
+    <!-- Major Search List -->
+    <div class="form-group">
+        <label for="Major" class="me-2">Major:</label>
+        <select name="Major" class="form-control" asp-items="ViewBag.Majors">
+            <option value="">-- Select Major --</option>
+        </select>
+    </div>
+
+    <!-- Graduation Date Search List -->
+    <div class="form-group">
+        <label for="GraduationYear" class="me-2">Graduation Date:</label>
+        <input type="number" name="GraduationYear" class="form-control" min="2000" max="2100" />
+    </div>
+
+    <br/>
+    <!-- Search buttons-->
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a asp-action="StudentSearch" method="get" class="btn btn-danger">Show All</a>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MiddleInitial)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GPA)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GraduationYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Major)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PositionType)
+            </th>
+            <th>
+                User Details:
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MiddleInitial)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GPA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GraduationYear)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Major.MajorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PositionType)
+                </td>
+                <td>
+                    <a asp-action="UserDetails" asp-controller="Account" asp-route-id="@item.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

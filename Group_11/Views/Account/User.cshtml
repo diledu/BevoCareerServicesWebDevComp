@@ -1,0 +1,74 @@
+﻿@model ProfileViewModel
+
+@{
+    ViewBag.Title = $"{Model.FirstName} {Model.LastName}";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>@Model.FirstName @Model.MiddleInitial @Model.LastName</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>Email:</dt>
+            <dd>@Model.Email</dd>
+
+            <dt>Status:</dt>
+            <dd>@Model.Status</dd>
+
+            @if (Model.RoleType == "Recruiter")
+            {
+                <dt>Company:</dt>
+                <dd>@Model.Company</dd>
+            }
+
+            @if (Model.RoleType == "Student")
+            {
+                <dt>Phone Number:</dt>
+                <dd>@Model.PhoneNumber</dd>
+
+                <dt>Major:</dt>
+                <dd>@Model.Major</dd>
+
+                <dt>GPA:</dt>
+                <dd>@Model.GPA</dd>
+
+                <dt>Graduation Year:</dt>
+                <dd>@Model.GraduationYear</dd>
+
+                <dt>Position Type:</dt>
+                <dd>@Model.PositionType</dd>
+            }
+        </dl>
+    </div>
+    @if(Model.RoleType == "Student") 
+    {
+        <div class="col-md-6">
+            <form asp-action="AssignStudent" asp-controller="Interviews" method="post">
+                @Html.Hidden("StudentId", Model.Id)
+                <div class="form-group">
+                    <label class="control-label">Assign Student to Interview:</label>
+                    @Html.DropDownList("InterviewId", (SelectList)ViewBag.OpenInterviews, new { @class = "form-control" })
+                </div>
+                <br />
+                <div class="form-group">
+                    <input type="submit" value="Assign" class="btn btn-primary" />
+                </div>
+            </form>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+        </div>
+    }
+
+    @if(User.IsInRole("CSO"))
+    {
+        <a asp-action="ChangePassword" asp-controller="Account" asp-route-userId="@Model.Id">Change Password</a>
+        <a asp-action="Edit" asp-controller="Account" asp-route-userId="@Model.Id">Edit Profile</a>
+    }
+</div>

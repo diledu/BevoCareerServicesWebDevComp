@@ -1,0 +1,75 @@
+﻿@model IEnumerable<Group_11.Models.Application>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!---Title Block based on Auth-->
+@if (User.Identity.IsAuthenticated)
+{
+    @if (User.IsInRole("Student"))
+    {
+
+        <h1>Your Applications:</h1>
+    }
+
+    @if (User.IsInRole("Recruiter"))
+    {
+        <h1>Your Company's Applications:</h1>
+    }
+
+    @if (User.IsInRole("CSO"))
+    {
+        <h1>All Applications':</h1>
+    }
+
+    @if (User.IsInRole("Recruiter") || User.IsInRole("CSO"))
+    {
+        <p>
+            <a asp-action="Create">Create New</a>
+        </p>
+    }
+}
+
+<!--Display List-->
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Company
+            </th>
+            <th>
+                Position Title
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                Date Applied
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Position.Company.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Position.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateTime)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.ApplicationId">Details</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

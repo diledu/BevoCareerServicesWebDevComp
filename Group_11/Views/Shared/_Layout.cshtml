@@ -1,0 +1,120 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@Html.AntiForgeryToken()
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - UT Recruitment</title>
+    <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #BF5700;">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav-content" aria-controls="nav-content" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="nav-content">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+                    </li>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @* Show correct label based on role *@
+                        <li class="nav-item">
+                            @if (User.IsInRole("CSO"))
+                            {
+                                <a asp-controller="Interviews" asp-action="Index" class="nav-link">Manage Interviews</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Interviews" asp-action="Index" class="nav-link">My Interviews</a>
+                            }
+                        </li>
+
+                        @if (User.IsInRole("Student"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Applications" asp-action="Index" class="nav-link">My Applications</a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="Positions" asp-action="Index" class="nav-link">Open Positions</a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Recruiter"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Companies" asp-action="RecruiterCompanyRouting" class="nav-link">Manage Company</a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("CSO"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Companies" asp-action="Index" class="nav-link">Manage Companies</a> <!-- 🔥 updated here -->
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Recruiter") || User.IsInRole("CSO"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Positions" asp-action="Index" class="nav-link">Manage Positions</a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="Home" asp-action="StudentSearch" method="get" class="nav-link">Student Search</a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("CSO"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="RoleAdmin" asp-action="Index" class="nav-link">Manage Users</a>
+                            </li>
+                        }
+                    }
+                </ul>
+                @await Html.PartialAsync("_LoginPartial")
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE CONTENT -->
+    <main class="flex-grow-1">
+        @{
+            var isHomePage = ViewContext.RouteData.Values["controller"]?.ToString() == "Home" &&
+            ViewContext.RouteData.Values["action"]?.ToString() == "Index";
+        }
+
+        @if (isHomePage)
+        {
+            @RenderBody()
+        }
+        else
+        {
+            <div class="container mt-4">
+                @RenderBody()
+            </div>
+        }
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-center text-white py-3 mt-auto border-top" style="background-color: #BF5700;">
+        <small>MIS333K - Group 11</small>
+    </footer>
+
+    <!-- Load Scripts -->
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/popper.js/popper.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/lib/jquery-validate/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,168 @@
+﻿@model Group_11.Models.Interview
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit Interview</h1>
+
+<h4>Interview</h4>
+<hr />
+<div class="d-flex flex-wrap">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="InterviewId" />
+            @Html.Hidden("PositionId", Model.Position.PositionId)
+            <input type="hidden" id="DateTime" name="DateTime" />
+            <span asp-validation-for="DateTime" class="text-danger"></span>
+
+            <div class="form-group">
+                <label asp-for="Room" class="control-label"></label>
+                <select asp-for="Room" class="form-control">
+                    <option value="">-- Select a Room --</option>
+                    <option value="1">Room 1</option>
+                    <option value="2">Room 2</option>
+                    <option value="3">Room 3</option>
+                    <option value="4">Room 4</option>
+                </select>
+                <span asp-validation-for="Room" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label">Date</label>
+                <input type="date"
+                id="customDate"
+                class="form-control"
+                min="@Model.Position.Deadline.AddHours(48).ToString("yyyy-MM-dd")"
+                value="@Model.DateTime.ToString("yyyy-MM-dd")" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Time</label>
+                <select id="customHour" class="form-control">
+                    <option value="">-- Select Time --</option>
+                    @for (int hour = 8; hour < 12; hour++)
+                    {
+                        if (Model.DateTime.Hour == hour)
+                        {
+                            <option value="@hour.ToString("D2")" selected>@hour.ToString("D2"):00</option>
+                        }
+                        else
+                        {
+                            <option value="@hour.ToString("D2")">@hour.ToString("D2"):00</option>
+                        }
+                    }
+                    @for (int hour = 13; hour < 17; hour++)
+                    {
+                        if (Model.DateTime.Hour == hour)
+                        {
+                            <option value="@hour.ToString("D2")" selected>@hour.ToString("D2"):00</option>
+                        }
+                        else
+                        {
+                            <option value="@hour.ToString("D2")">@hour.ToString("D2"):00</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Interviewer:</label>
+                @Html.DropDownList("InterviewerId", (SelectList)ViewBag.interviewerList, new { @class = "form-control" })
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+
+    <!--Display existing interviews-->
+    <div class="col-md-6 ps-md-5 mt-4 mt-md-0">
+        <h5>Interviews on Selected Date</h5>
+        <ul id="interviewList" class="list-group mb-3">
+            <li class="list-group-item text-muted">No Date Selected.</li>
+        </ul>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <!-- Import Flatpickr Date Component-->
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Custom date validation-->
+    <script>
+        // get existing interviews from ViewBag
+        const allInterviews = @Html.Raw(Json.Serialize(ViewBag.ExistingInterviews ?? new List<object>()));
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // instantiate variables from form values
+            const dateInput = document.getElementById('customDate');
+            const hourInput = document.getElementById('customHour');
+            const hiddenDateTime = document.getElementById('DateTime');
+            const interviewList = document.getElementById('interviewList');
+
+            // Initialize Flatpickr on date input
+            flatpickr("#customDate", {
+                dateFormat: "Y-m-d",
+                minDate: "@Model.Position.Deadline.AddHours(48).ToString("yyyy-MM-dd")",
+                disable: [
+                    function(date) {
+                        // Disable weekends: Sunday = 0, Saturday = 6
+                        return (date.getDay() === 0 || date.getDay() === 6);
+                    }
+                ],
+                onChange: function (selectedDates, dateStr) {
+                    updateHiddenInput();
+                    renderInterviewsForDate(dateStr);
+                }
+            });
+
+            // helper method to set DateTime Model value
+            function updateHiddenInput() {
+                const date = dateInput.value;
+                const hour = hourInput.value;
+                if (date && hour) {
+                    hiddenDateTime.value = `${date}T${hour}:00`;
+                } else {
+                    hiddenDateTime.value = '';
+                }
+            }
+
+            // helper method to render existing interviews for selected date
+            function renderInterviewsForDate(dateStr) {
+                const matches = allInterviews.filter(i => i.date === dateStr);
+                interviewList.innerHTML = '';
+
+                // if no interviews on the day, return empty list
+                if (matches.length === 0) {
+                    interviewList.innerHTML = `<li class="list-group-item text-muted">No interviews scheduled on this date.</li>`;
+                    return;
+                }
+
+                matches.forEach(interview => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.innerHTML = `<strong>${interview.time}</strong> – Room ${interview.room}`;
+                    interviewList.appendChild(li);
+                });
+            }
+
+            // check hour input
+            hourInput.addEventListener('change', updateHiddenInput);
+
+            // default for predefined value
+            updateHiddenInput();
+            if (dateInput.value) {
+                renderInterviewsForDate(dateInput.value);
+            }
+        });
+    </script>
+}

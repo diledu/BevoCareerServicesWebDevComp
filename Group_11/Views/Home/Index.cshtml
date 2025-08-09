@@ -1,0 +1,62 @@
+﻿<div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (ViewBag.RecruiterNotice != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            @ViewBag.RecruiterNotice
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+
+    <div class="text-center">
+        <img src="~/images/0_RGB_McCombs_School_Informal-yes-with-shield.png"
+        alt="Welcome to UT Recruiting"
+        class="img-fluid"
+        style="max-width: 200px;" />
+    </div>
+
+    <section class="container-fluid px-0">
+        <div class="position-relative">
+            <img src="~/images/homepage_banner.jpg" alt="Welcome Image" class="img-fluid w-100" />
+
+            <!-- Top-left text -->
+            <div class="position-absolute top-0 start-0 p-4">
+                <h1 class="display-4 fw-bold" style="color: #BF5700;">Welcome to UT Recruiting.</h1>
+            </div>
+
+            <!-- Bottom-right text -->
+            <div class="position-absolute bottom-0 end-0 p-4 text-end">
+                <h1 class="display-4 fw-bold text-white">What starts here changes the world...</h1>
+            </div>
+        </div>
+    </section>
+
+    <br />
+
+    <div class="text-center">
+        @if(!User.Identity.IsAuthenticated)
+        {
+            <a asp-action="Login" asp-controller="Account" class="btn btn-primary">Login</a>
+        }
+        else
+        {
+            <a asp-action="Index" asp-controller="Companies" class="btn btn-primary">Find Companies</a>
+            <a asp-action="Index" asp-controller="Positions" class="btn btn-primary">Find Open Positions</a>
+        }
+
+        <br />
+
+        <h2>Set Global Time</h2>
+        <form asp-action="Index" method="post">
+            <input type="datetime-local" name="newDateTime" required value="@ViewBag.currDateTime.ToString("yyyy-MM-ddTHH:mm")" />
+            <button type="submit" class="btn btn-primary">Set Global Time</button>
+        </form>
+    </div>
+</div>

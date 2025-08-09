@@ -1,0 +1,62 @@
+﻿@using Group_11.Models
+@model Group_11.Models.Application
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Application</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Position Title
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Position.Title)
+        </dd>
+        <dt class="col-sm-2">
+            Company
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Position.Company.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class = "col-sm-2">
+            DateTime Submitted
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DateTime)
+        </dd>
+        <dt class="col-sm-2">
+            Position Deadline
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Position.Deadline)
+        </dd>
+    </dl>
+</div>
+<div>
+    @if ((ViewBag.currDateTime < Model.Position.Deadline) && Model.Status != Group_11.Models.Application.AppStatus.Withdrawn)
+    {
+        <a asp-action="Withdraw" asp-route-id="@Model.ApplicationId" class="btn btn-secondary">Withdraw</a>
+        @if (TempData["WithdrawMessage"] != null)
+        {
+            <div class="alert alert-info">
+                @TempData["WithdrawMessage"]
+            </div>
+        }
+    }
+    @if (Model.Status == Group_11.Models.Application.AppStatus.Accepted)
+    {
+        <a asp-action="Schedule" asp-controller="Interviews" asp-route-positionId="@Model.Position.PositionId" class="btn btn-primary">Schedule Interview</a>
+    }
+    <a asp-action="Index" class="btn btn-primary">Back to List</a>
+</div>

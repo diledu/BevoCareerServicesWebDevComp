@@ -1,0 +1,98 @@
+﻿@model Group_11.Models.PositionSearchViewModel
+@using Group_11.Models
+
+@{
+    ViewData["Title"] = "Detailed Search";
+
+    var stateOptions = Enum.GetValues(typeof(States)).Cast<States>();
+    var typeOptions = Enum.GetValues(typeof(PositionType)).Cast<PositionType>();
+}
+
+<h1>Detailed Search</h1>
+
+<form asp-action="Search" method="post" class="mb-4">
+    <div class="row mb-2">
+        <div class="col">
+            <input asp-for="CompanyName" class="form-control" placeholder="Company Name" />
+        </div>
+        <div class="col">
+            <input asp-for="IndustryName" class="form-control" placeholder="Industry" />
+        </div>
+        <div class="col">
+            <select asp-for="PositionType" class="form-control">
+                <option value="">-- Position Type --</option>
+                @foreach (var type in typeOptions)
+                {
+                    <option value="@type" selected="@(Model.PositionType == type.ToString() ? "selected" : null)">
+                        @type
+                    </option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col">
+            <input asp-for="MajorName" class="form-control" placeholder="Major" />
+        </div>
+        <div class="col">
+            <input asp-for="City" class="form-control" placeholder="City" />
+        </div>
+        <div class="col">
+            <select asp-for="State" class="form-control">
+                <option value="">-- State --</option>
+                @foreach (var state in stateOptions)
+                {
+                    <option value="@state" selected="@(Model.State == state.ToString() ? "selected" : null)">
+                        @state
+                    </option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+@if (Model.Results != null && Model.Results.Any())
+{
+    <h4>Results</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Location</th>
+                <th>Majors</th>
+                <th>Industry</th>
+                <th>Deadline</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var position in Model.Results)
+            {
+                <tr>
+                    <td>@position.Company?.Name</td>
+                    <td>@position.Title</td>
+                    <td>@position.Description</td>
+                    <td>@position.Type</td>
+                    <td>@position.City, @position.State</td>
+                    <td>@string.Join(", ", position.Majors.Select(m => m.MajorName))</td>
+                    <td>@string.Join(", ", position.Company?.Industries.Select(i => i.IndustryName))</td>
+
+                    <td>@position.Deadline.ToShortDateString()</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@position.PositionId" class="btn btn-sm btn-outline-info">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (Model.Results != null)
+{
+    <p>No results found.</p>
+}

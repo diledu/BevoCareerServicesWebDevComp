@@ -1,0 +1,29 @@
+﻿@model Group_11.Models.Position
+
+@{
+    ViewData["Title"] = "Schedule";
+}
+
+<h1>@Model.Company.Name: @Model.Title</h1>
+<h2>Congratulations on Your Acceptance! Schedule An Interview: </h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Schedule" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			@Html.Hidden("positionId", Model.PositionId)
+            <div class="form-group">
+                <label class="control-label">Select Interview Slot:</label>
+                @Html.DropDownList("interviewId", (SelectList)ViewBag.interviewList, new { @class = "form-control" })
+            </div>
+			<br />
+            <div class="form-group">
+                <input type="submit" value="Schedule" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Applications">Back to List</a>
+</div>

@@ -1,0 +1,27 @@
+﻿@model Group_11.ViewModels.ApplicationCreateViewModel
+
+@{
+    ViewData["Title"] = "Apply for Position";
+}
+
+<h2>Apply for @Model.Title</h2>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="PositionId" />
+
+    <dl class="row">
+        <dt class="col-sm-2">Company:</dt>
+        <dd class="col-sm-10">@Model.CompanyName</dd>
+
+        <dt class="col-sm-2">Deadline:</dt>
+        <dd class="col-sm-10">@Model.Deadline.ToShortDateString()</dd>
+
+        <dt class="col-sm-2">Status:</dt>
+        <dd class="col-sm-10">@Model.Status</dd>
+    </dl>
+
+    <button type="submit" class="btn btn-success">Submit Application</button>
+    <a asp-action="Index" asp-controller="Positions" class="btn btn-secondary">Cancel</a>
+</form>

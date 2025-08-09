@@ -1,0 +1,127 @@
+﻿@model IEnumerable<Group_11.Models.Position>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
+{
+    <h1>Find Open Positions!</h1>
+}
+
+
+@if (User.Identity.IsAuthenticated && (User.IsInRole("Recruiter") || User.IsInRole("CSO")))
+{
+    <h1>Manage Positions</h1>
+
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- 🔍 Search Form -->
+<form asp-action="Index" method="get" class="mb-3">
+    <div class="form-group d-flex">
+        <input type="text" name="searchString" class="form-control me-2"
+        placeholder="Search by Position Title"
+        value="@Context.Request.Query["searchString"]" />
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+    </div>
+</form>
+
+@if(User.IsInRole("Recruiter"))
+{
+    <p>
+        <a asp-action="Search">Search All Existing Positions</a>
+    </p>
+}
+else
+{
+    <p>
+        <a asp-action="Search">Advanced Search</a>
+    </p>
+}
+
+
+<!-- Position Table -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Company
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <!--Concatenated location-->
+            <th>
+                Location
+            </th>
+            <th>
+                Majors
+            </th>
+            <th>
+                Industries
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Deadline)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Company.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>@item.City, @item.State</td>
+                <td>
+                    @string.Join(", ", item.Majors.Select(m => m.MajorName))
+                </td>
+                <td>@string.Join(", ", item.Company?.Industries.Select(i => i.IndustryName))</td>
+                <td>@item.Deadline.ToShortDateString()</td>
+
+                <!--Role check for actions-->
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.PositionId">Details</a>
+                    </td>
+                    @if(User.IsInRole("Recruiter") || User.IsInRole("CSO"))
+                    {
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.PositionId">Edit</a>
+                        </td>
+                        <td>
+                            <a asp-action="Create" asp-controller="Interviews" asp-route-positionId="@item.PositionId">Schedule Interviews</a>
+                        </td>
+                    }
+                }
+        </tr>
+    }
+    </tbody>
+</table>

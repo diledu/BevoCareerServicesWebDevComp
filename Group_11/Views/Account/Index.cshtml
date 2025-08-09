@@ -1,0 +1,58 @@
+﻿@model AppUser
+@using Microsoft.AspNetCore.Identity
+
+<h1>@Model.FullName</h1>
+
+<div>
+    <h4>Your Account Details</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>User Name:</dt>
+        <dd>@Model.UserName</dd>
+
+        <dt>Email:</dt>
+        <dd>@Model.Email</dd>
+
+        @if(User.IsInRole("Student"))
+        {
+            <dt>Phone:</dt>
+            <dd>@Model?.PhoneNumber</dd>
+
+            <dt>Birthday:</dt>
+            <dd>@Model?.Birthday</dd>
+
+            <dt>SSN:</dt>
+            <dd>@Model?.SSN</dd>
+
+            <dt>Address:</dt>
+            <dd>@Model?.Street @Model.City @Model.State @Model.Zip</dd>
+
+            <dt>Major:</dt>
+            <dd>@Model?.Major.MajorName</dd>
+
+            <dt>Position:</dt>
+            <dd>@Model?.PositionType</dd>
+
+            <dt>Graduation Year:</dt>
+            <dd>@Model?.GraduationYear</dd>
+
+            <dt>GPA:</dt>
+            <dd>@Model?.GPA</dd>
+        }
+
+        @if(User.IsInRole("Recruiter"))
+        {
+            <dt>Company:</dt>
+            <dd>@Model?.Company.Name</dd>
+        }
+
+        <dt>Status:</dt>
+        <dd>@Model.Status</dd>
+
+        <dt>Password:</dt>
+        <dd>
+            <a asp-action="ChangePassword" asp-controller="Account" asp-route-userId="@Model.Id">Change Password</a>
+        </dd>
+    </dl>
+    <a asp-action="Edit" asp-controller="Account" asp-route-userId="@Model.Id">Edit Profile</a>
+</div>
